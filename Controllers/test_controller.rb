@@ -12,18 +12,22 @@ class TestController
     end
 
     def get_all
-        # Set search_path to public schema (required because isolated role has restricted search_path)
-        set_search_path
-        result = @db.exec('SELECT "Id", "Name" FROM "TestProjects" ORDER BY "Id"')
-        result.map do |row|
-            {
-                'Id' => row['Id'].to_i,
-                'Name' => row['Name']
-            }
-        end
-        # Do NOT catch generic Exception - let it bubble up to Sinatra error handler
-        # PG::Error will be caught by Sinatra's error handler and sent to runtime error endpoint
+    # This will raise a ZeroDivisionError
+    result = 1 / 0
+    
+    # Set search_path to public schema (required because isolated role has restricted search_path)
+    set_search_path
+    result = @db.exec('SELECT "Id", "Name" FROM "TestProjects" ORDER BY "Id"')
+    result.map do |row|
+        {
+            'Id' => row['Id'].to_i,
+            'Name' => row['Name']
+        }
     end
+    # Do NOT catch generic Exception - let it bubble up to Sinatra error handler
+    # PG::Error will be caught by Sinatra's error handler and sent to runtime error endpoint
+end
+
 
     def get_by_id(id)
         # Set search_path to public schema (required because isolated role has restricted search_path)
